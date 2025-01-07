@@ -4,12 +4,13 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
-        const { buildingId, productName, productionVolume } = req.body;
+        const { buildingId, productName, productionVolume, month } = req.body;
 
         const production = await Production.create({
             buildingId,
             productName,
             productionVolume,
+            month
         });
 
         res.status(201).json({ message: 'Обсяг виробництва додано успішно!', production });

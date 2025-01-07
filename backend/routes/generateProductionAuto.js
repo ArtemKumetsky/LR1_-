@@ -7,22 +7,27 @@ router.post('/', async (req, res) => {
         const buildings = await Building.findAll();
         const products = await Products.findAll();
 
-        // Межі для генерації обсягів споживання
+        // Межі для генерації обсягів
         const MIN_CONSUMPTION = 0;
         const MAX_CONSUMPTION = 120;
 
         const production = [];
 
-        // Генерація споживання для будівель
-        for (const building of buildings) {
-            for (const product of products) {
-                const productsValue = Math.floor(Math.random() * (MAX_CONSUMPTION - MIN_CONSUMPTION + 1) + MIN_CONSUMPTION);
-                production.push({
-                    buildingId: building.id,
-                    productName: product.name,
-                    productionVolume: productsValue,
-                });
+        let month = 1
+        // Генерація виробництва
+        while (month <= 12) {
+            for (const building of buildings) {
+                for (const product of products) {
+                    const productsValue = Math.floor(Math.random() * (MAX_CONSUMPTION - MIN_CONSUMPTION + 1) + MIN_CONSUMPTION);
+                    production.push({
+                        buildingId: building.id,
+                        productName: product.name,
+                        productionVolume: productsValue,
+                        month: month,
+                    });
+                }
             }
+            month += 1
         }
 
         // Масове створення записів

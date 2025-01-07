@@ -13,20 +13,25 @@ router.post('/', async (req, res) => {
 
         const consumptions = [];
 
+        let month = 1
         // Генерація споживання для будівель
-        for (const building of buildings) {
-            for (const resource of resources) {
-                const consumptionValue = Math.floor(Math.random() * (MAX_CONSUMPTION - MIN_CONSUMPTION + 1) + MIN_CONSUMPTION);
-                const tariff = Math.random() * 10
-                consumptions.push({
-                    buildingId: building.id,
-                    resourceId: resource.id,
-                    amount: consumptionValue,
-                    month: new Date().getMonth() + 1,
-                    tariff: tariff,
-                    cost: tariff * consumptionValue,
-                });
+
+        while (month <= 12) {
+            for (const building of buildings) {
+                for (const resource of resources) {
+                    const consumptionValue = Math.floor(Math.random() * (MAX_CONSUMPTION - MIN_CONSUMPTION + 1) + MIN_CONSUMPTION);
+                    const tariff = Math.random() * 10
+                    consumptions.push({
+                        buildingId: building.id,
+                        resourceId: resource.id,
+                        amount: consumptionValue,
+                        month: month,
+                        tariff: tariff,
+                        cost: tariff * consumptionValue,
+                    });
+                }
             }
+            month += 1;
         }
 
         // Масове створення записів

@@ -23,6 +23,8 @@ const Production = sequelize.define('Production', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
+    month: { type: DataTypes.INTEGER, allowNull: false },
+
 }, {timestamps: false});
 
 module.exports = Production;
