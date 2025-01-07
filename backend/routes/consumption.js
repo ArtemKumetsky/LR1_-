@@ -10,22 +10,21 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { resourceId, buildingId, equipmentId, month, year, amount } = req.body;
+    const { resourceId, buildingId, month, amount, tariff } = req.body;
 
     // Розрахунок вартості
     const resource = await Resource.findByPk(resourceId);
     if (!resource) {
         return res.status(404).json({ error: 'Resource not found' });
     }
-    const cost = resource.price * amount;
+    const cost = tariff * amount;
 
     const newConsumption = await Consumption.create({
         resourceId,
         buildingId,
-        equipmentId,
         month,
-        year,
         amount,
+        tariff,
         cost,
     });
     res.json(newConsumption);

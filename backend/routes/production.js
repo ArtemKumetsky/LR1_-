@@ -4,11 +4,10 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
-        const { buildingId, equipmentId, productName, productionVolume } = req.body;
+        const { buildingId, productName, productionVolume } = req.body;
 
         const production = await Production.create({
             buildingId,
-            equipmentId: equipmentId || null,
             productName,
             productionVolume,
         });

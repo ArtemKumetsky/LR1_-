@@ -8,8 +8,8 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { name, unit, price } = req.body;
-    const newResource = await Resource.create({ name, unit, price });
+    const { name, unit} = req.body;
+    const newResource = await Resource.create({ name, unit});
     res.json(newResource);
 });
 

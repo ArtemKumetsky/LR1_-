@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { Building, Equipment } = require('./index');
+const { Building } = require('./index');
 const sequelize = require('../config/database');
 
 const Production = sequelize.define('Production', {
@@ -15,14 +15,6 @@ const Production = sequelize.define('Production', {
             key: 'id',
         },
     },
-    equipmentId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: Equipment,
-            key: 'id',
-        },
-    },
     productName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -31,6 +23,6 @@ const Production = sequelize.define('Production', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-});
+}, {timestamps: false});
 
 module.exports = Production;

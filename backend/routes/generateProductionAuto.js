@@ -1,36 +1,32 @@
 const express = require('express');
-const { Building, Resource, Consumption } = require('../models');
+const { Building, Products, Production} = require('../models');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
         const buildings = await Building.findAll();
-        const resources = await Resource.findAll();
+        const products = await Products.findAll();
 
         // Межі для генерації обсягів споживання
-        const MIN_CONSUMPTION = 100;
-        const MAX_CONSUMPTION = 12000;
+        const MIN_CONSUMPTION = 0;
+        const MAX_CONSUMPTION = 120;
 
-        const consumptions = [];
+        const production = [];
 
         // Генерація споживання для будівель
         for (const building of buildings) {
-            for (const resource of resources) {
-                const consumptionValue = Math.floor(Math.random() * (MAX_CONSUMPTION - MIN_CONSUMPTION + 1) + MIN_CONSUMPTION);
-                const tariff = Math.random() * 10
-                consumptions.push({
+            for (const product of products) {
+                const productsValue = Math.floor(Math.random() * (MAX_CONSUMPTION - MIN_CONSUMPTION + 1) + MIN_CONSUMPTION);
+                production.push({
                     buildingId: building.id,
-                    resourceId: resource.id,
-                    amount: consumptionValue,
-                    month: new Date().getMonth() + 1,
-                    tariff: tariff,
-                    cost: tariff * consumptionValue,
+                    productName: product.name,
+                    productionVolume: productsValue,
                 });
             }
         }
 
         // Масове створення записів
-        await Consumption.bulkCreate(consumptions);
+        await Production.bulkCreate(production);
 
         res.status(200).json({ message: 'Споживання ресурсів згенеровано успішно!' });
     } catch (error) {
