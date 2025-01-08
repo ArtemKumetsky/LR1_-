@@ -31,17 +31,45 @@ async function getbuildingDataWithMonths() {
             });
 
             // Запити до бази даних для кожного показника
-            const consumptionQuery = `
+            const E_consumptionQuery = `
                 SELECT month, SUM(amount) AS totalConsumption 
                 FROM consumptions 
                 WHERE resourceId = (SELECT id FROM resources WHERE name = 'Електроенергія') 
                   AND buildingId IN (SELECT id FROM buildings WHERE buildingId = :buildingId)
                 GROUP BY month
             `;
-            const costQuery = `
+            const E_costQuery = `
                 SELECT month, SUM(amount * tariff) AS totalCost 
                 FROM consumptions 
                 WHERE resourceId = (SELECT id FROM resources WHERE name = 'Електроенергія') 
+                  AND buildingId IN (SELECT id FROM buildings WHERE buildingId = :buildingId)
+                GROUP BY month
+            `;
+            const W_consumptionQuery = `
+                SELECT month, SUM(amount) AS totalConsumption
+                FROM consumptions
+                WHERE resourceId = (SELECT id FROM resources WHERE name = 'Вода')
+                  AND buildingId IN (SELECT id FROM buildings WHERE buildingId = :buildingId)
+                GROUP BY month
+            `;
+            const W_costQuery = `
+                SELECT month, SUM(amount * tariff) AS totalCost 
+                FROM consumptions 
+                WHERE resourceId = (SELECT id FROM resources WHERE name = 'Вода') 
+                  AND buildingId IN (SELECT id FROM buildings WHERE buildingId = :buildingId)
+                GROUP BY month
+            `;
+            const G_consumptionQuery = `
+                SELECT month, SUM(amount) AS totalConsumption
+                FROM consumptions
+                WHERE resourceId = (SELECT id FROM resources WHERE name = 'Газ')
+                  AND buildingId IN (SELECT id FROM buildings WHERE buildingId = :buildingId)
+                GROUP BY month
+            `;
+            const G_costQuery = `
+                SELECT month, SUM(amount * tariff) AS totalCost 
+                FROM consumptions 
+                WHERE resourceId = (SELECT id FROM resources WHERE name = 'Газ') 
                   AND buildingId IN (SELECT id FROM buildings WHERE buildingId = :buildingId)
                 GROUP BY month
             `;
@@ -52,8 +80,12 @@ async function getbuildingDataWithMonths() {
                 GROUP BY month
             `;
 
-            const [consumptionData] = await sequelize.query(consumptionQuery, { replacements: { buildingId } });
-            const [costData] = await sequelize.query(costQuery, { replacements: { buildingId } });
+            const [E_consumptionData] = await sequelize.query(E_consumptionQuery, { replacements: { buildingId } });
+            const [E_costData] = await sequelize.query(E_costQuery, { replacements: { buildingId } });
+            const [W_consumptionData] = await sequelize.query(W_consumptionQuery, { replacements: { buildingId } });
+            const [W_costData] = await sequelize.query(W_costQuery, { replacements: { buildingId } });
+            const [G_consumptionData] = await sequelize.query(G_consumptionQuery, { replacements: { buildingId } });
+            const [G_costData] = await sequelize.query(G_costQuery, { replacements: { buildingId } });
             const [productionData] = await sequelize.query(productionQuery, { replacements: { buildingId } });
 
             // Функція для заповнення даних по місяцях
@@ -62,8 +94,12 @@ async function getbuildingDataWithMonths() {
 
             // Додавання рядків до таблиці
             table.push(
-                ['Споживання електроенергії', ...fillRow(consumptionData, 'totalConsumption')],
-                ['Витрати на електроенергію', ...fillRow(costData, 'totalCost')],
+                ['Споживання електроенергії', ...fillRow(E_consumptionData, 'totalConsumption')],
+                ['Витрати на електроенергію', ...fillRow(E_costData, 'totalCost')],
+                ['Споживання води', ...fillRow(W_consumptionData, 'totalConsumption')],
+                ['Витрати на воду', ...fillRow(W_costData, 'totalCost')],
+                ['Споживання газу', ...fillRow(G_consumptionData, 'totalCost')],
+                ['Витрати на газ', ...fillRow(G_costData, 'totalCost')],
                 ['Обсяги виробництва продукції', ...fillRow(productionData, 'totalProduction')]
             );
 
